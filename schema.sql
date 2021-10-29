@@ -1,12 +1,19 @@
-create table Product(
+-- The participation constraints on product and manufacturer cannot be captured in this implementation 
+
+create table Product_produces_transaction(
     serial_num char(32) primary key,
+    cid integer not null,
+    sid integer not null,
+    timestamp timestamp not null,
+    price integer not null,
     name varchar(128) not null,
     category varchar (32),
-    date_produced date not null, 
-    manufacturuer integer not null unique,
-    brand varchar (128) not null,
+    manufacturuer integer not null,
     description varchar(512),
-    foreign key (manufacturuer, brand) references Manufacturuer(mid, name),    
+    foreign key (manufacturuer) references Manufacturuer(mid),
+    foreign key (cid) references Customer(cid),
+    foreign key (sid) references Seller(sid),
+    foreign key (timestamp) references Time(timestamp)
 );
 
 create table Manufacturuer(
@@ -15,12 +22,10 @@ create table Manufacturuer(
 );
 
 create table Warehouse(
+    name varchar(128) primary key,
     items_stored integer,
-    total_capacity integer
-    street varchar(64),
-    city varchar(64),
-    state varchar(64),
-    zip integer,    
+    capacity integer,
+    address varchar(256), 
 );
 
 create table Seller(
@@ -29,34 +34,19 @@ create table Seller(
 );
 
 create table Customer(
-    customer_id integer primary key,
+    id integer primary key,
     name varchar(64),
     surname varchar(64),
-    street varchar(64),
-    city varchar(64),
-    state varchar(64),
-    zip integer,  
+    address varchar(256),
 );
 
 create table Time(
-    time timestamp primary key
+    time timestamp primary key,
 );
 
-create table Transaction(
-    serial_num char(32),
-    customer integer,
-    seller integer,
-    timestamp timestamp,
-    primary key(serial_num, customer, serial_num, timestamp),
-    foreign key (serial_num) references Product(serial_num),
-    foreign key (seller) references Seller(sid),
-    foreign key (customer) references Customer(cid),
-    foreign key (timestamp) references Time(timestamp),
-);
-
-create table Inventory(
+create table Inventory_manage( 
     iid integer primary key,
-    manager integer unique not null,
+    manager integer not null,
     quantity integer,
     foreign key (manager) references Seller(sid)
 );
@@ -67,13 +57,4 @@ create table Stock(
     primary key(serial_num, iid);
     foreign key (serial_num) references Product,
     foreign key (iid) references Inventory
-);
-
-create table Listing(
-    serial_num char(32) ,
-    sid integer,
-    primary key(serial_num, sid),
-    price integer not null,
-    foreign key (serial_num) references Product(serial_num),
-    foreign key (sid) references Seller(sid)    
 );
