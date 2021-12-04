@@ -10,30 +10,30 @@ create table Product_produces_transaction(
     category varchar (32),
     manufacturuer integer not null,
     description varchar(512),
-    foreign key (manufacturuer) references Manufacturuer(mid),
-    foreign key (cid) references Customer(cid),
-    foreign key (sid) references Seller(sid),
+    foreign key (manufacturuer) references Manufacturers(mid),
+    foreign key (cid) references Customers(cid),
+    foreign key (sid) references Sellers(sid),
     foreign key (timestamp) references Time(timestamp)
 );
 
-create table Manufacturuer(
+create table Manufacturers(
     mid integer primary key,
     name varchar (128) not null,
 );
 
-create table Warehouse(
+create table Warehouses(
     name varchar(128) primary key,
     items_stored integer,
     capacity integer,
     address varchar(256), 
 );
 
-create table Seller(
+create table Sellers(
     sid integer primary key,
     name varchar(64),
 );
 
-create table Customer(
+create table Customers(
     id integer primary key,
     name varchar(64),
     surname varchar(64),
@@ -48,7 +48,7 @@ create table Inventory_manage(
     iid integer primary key,
     manager integer not null,
     quantity integer,
-    foreign key (manager) references Seller(sid)
+    foreign key (manager) references Sellers(sid)
 );
 
 create table Stock(
@@ -58,3 +58,11 @@ create table Stock(
     foreign key (serial_num) references Product,
     foreign key (iid) references Inventory
 );
+
+create table Stored_in(
+    serial_num integer
+    name varchar(64)
+    primary key(serial_num, name)
+    foreign key (serial_num) references Product
+    foreign key (name) references Warehouses
+)
