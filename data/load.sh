@@ -3,4 +3,5 @@
  cat ./csv_files/sellers.csv | psql -U jb7607 -d jb7607_db -c "COPY Sellers FROM STDIN CSV HEADER"
  cat ./csv_files/manufacturers.csv | psql -U jb7607 -d jb7607_db -c "COPY Manufacturers FROM STDIN CSV HEADER"
  cat ./csv_files/warehouses.csv | psql -U jb7607 -d jb7607_db -c "COPY Warehouses FROM STDIN CSV HEADER"
+ cat ./csv_files/transaction_times.csv | psql -U jb7607 -d jb7607_db -c "COPY Time FROM STDIN CSV HEADER"
  cat ./csv_files/products.csv | psql -U jb7607 -d jb7607_db -c "COPY Product_produces_transaction FROM STDIN CSV HEADER"

@@ -3,6 +3,7 @@ drop table if exists Manufacturers cascade;
 drop table if exists Sellers cascade;
 drop table if exists Warehouses cascade;
 drop table if exists Inventory_manage cascade;
+drop table if exists Time cascade;
 drop table if exists Product_produces_transaction cascade;
 drop table if exists Stock cascade;
 drop table if exists Stored_in cascade;
