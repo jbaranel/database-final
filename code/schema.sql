@@ -65,11 +65,11 @@ create table Stock(
     iid integer,
     primary key(serial_num, iid),
     foreign key (serial_num) references Product_produces_transaction(serial_num),
-    foreign key (iid) references Inventory(iid)
+    foreign key (iid) references Inventory_manage(iid)
 );
 
 create table Stored_in(
-    serial_num integer,
+    serial_num char(32),
     name varchar(64),
     primary key(serial_num, name),
     foreign key (serial_num) references Product_produces_transaction(serial_num),
