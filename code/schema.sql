@@ -26,7 +26,7 @@ create table Sellers(
 );
 
 create table Customers(
-    id integer primary key,
+    cid integer primary key,
     name varchar(64),
     surname varchar(64),
     address varchar(256)
