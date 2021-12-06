@@ -34,14 +34,14 @@ create table Customers(
 );
 
 create table Time(
-    time timestamp primary key
+    date_time timestamp primary key
 );
 
 create table Product_produces_transaction(
     serial_num char(32) primary key,
     cid integer not null,
     sid integer not null,
-    timestamp timestamp not null,
+    date_time timestamp not null,
     price integer not null,
     name varchar(128) not null,
     category varchar (32),
@@ -50,7 +50,7 @@ create table Product_produces_transaction(
     foreign key (manufacturuer) references Manufacturers(mid),
     foreign key (cid) references Customers(cid),
     foreign key (sid) references Sellers(sid),
-    foreign key (timestamp) references Time(timestamp)
+    foreign key (date_time) references Time(date_time)
 );
 
 create table Inventory_manage( 
@@ -64,14 +64,14 @@ create table Stock(
     serial_num char(32)
     iid integer,
     primary key(serial_num, iid),
-    foreign key (serial_num) references Product,
-    foreign key (iid) references Inventory
+    foreign key (serial_num) references Product(serial_num),
+    foreign key (iid) references Inventory(iid)
 );
 
 create table Stored_in(
     serial_num integer,
     name varchar(64),
     primary key(serial_num, name),
-    foreign key (serial_num) references Product,
-    foreign key (name) references Warehouses
+    foreign key (serial_num) references Product(serial_num),
+    foreign key (name) references Warehouses(name)
 );
