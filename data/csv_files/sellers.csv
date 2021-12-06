@@ -1,101 +1,101 @@
-seller,country
-Pharmapacks,United States
-iServe,United States
-Zappos,United States
-"Asurion, LLC",United States
-AnkerDirect,United States
-Spreetail,United States
-EPFamily Direct,United States
-Carlyle,United States
-Spigen Inc,United States
-JoyinDirect,United States
-Utopia Deals,United States
-MYBATTERYSUPPLIER,United States
-Orva Stores,United States
-Galactic Shop,United States
-topshoesUS,United States
-Book Depository US,United Kingdom
-glenthebookseller,United States
-Juvo+,United States
-Fintie,United States
-River Colony Trading,United States
-VirVentures,United States
-Decluttr Store,United States
-Bedsure,United States
-Supershieldz,United States
-Common Cents Distributors,United States
-AilunUS,China
-SportingDoc,United States
-GORILLA COMMERCE,United States
-ShippedFast,United States
-Aserson,United States
-recommerce,United States
-TheNewMall,United States
-Just Love Fashion,United States
-Hour Loop,United States
-eSupplements,United States
-YH-Goods,United States
-6pm,United States
-Hippo Books,United States
-MetroDecor,United States
-uxcell,Hong Kong
-Kaspien,United States
-Wiki Deals,United States
-Tech Vendor,United States
-LiCB,China
-LY Berditchev Co.,United States
-Mr. Pen,United States
-Oliver's Pet Care,United States
-imagikids LLC,United States
-TCP Global Corp,United States
-megahitrecords,United States
-CPGIO,United States
-Swanson Health Products,United States
-Sports Research,United States
-BN-LINK,United States
-Royal Meds,United States
-Zulay Deals,United States
-Woot,United States
-Baleaf Sports,China
-Songmics Direct,United States
-OxKom,United States
-Dewenwils,China
-Monster Pets,United States
-JE Products US,United States
-UGREEN GROUP LIMITED,China
-EXPECT MORE,United States
-JS Digital,China
-VerSure,United States
-HLmedical,United States
-Libros Judios,United States
-Anthony's Goods,United States
-importcds,United States
-Vive Health Direct,United States
-Mr. Medical,United States
-Vont,United States
-Twinkle Star LLC,United States
-RAREWAVES-IMPORTS,United Kingdom
-Govee US,Hong Kong
-GreatStar Tools,United States
-BestChoiceproducts,United States
-Impresa Products,United States
-i-Deals Store,United States
-H.VERSAILTEX,China
-Thalestris Co.,United States
-Andromache,United States
-HiwareDirect,China
-Autobodynow,United States
-My RMS Store,United States
-NetRush,United States
-Real Essentials,United States
-BuyBoxer,United States
-My Great Goods,United States
-Filterbuy,United States
-YETI Authorized,United States
-Number 1 In Service,United States
-Jenson Books Inc,United States
-Vermont Christmas Co,United States
-AstroAI Corporation,United States
-ZQUARED,United States
-"Terrific Deal, Inc.",United States
-Healthy Pantry,United States
+id,seller,country
+1,Pharmapacks,United States
+2,iServe,United States
+3,Zappos,United States
+4,"Asurion, LLC",United States
+5,AnkerDirect,United States
+6,Spreetail,United States
+7,EPFamily Direct,United States
+8,Carlyle,United States
+9,Spigen Inc,United States
+10,JoyinDirect,United States
+11,Utopia Deals,United States
+12,MYBATTERYSUPPLIER,United States
+13,Orva Stores,United States
+14,Galactic Shop,United States
+15,topshoesUS,United States
+16,Book Depository US,United Kingdom
+17,glenthebookseller,United States
+18,Juvo+,United States
+19,Fintie,United States
+20,River Colony Trading,United States
+21,VirVentures,United States
+22,Decluttr Store,United States
+23,Bedsure,United States
+24,Supershieldz,United States
+25,Common Cents Distributors,United States
+26,AilunUS,China
+27,SportingDoc,United States
+28,GORILLA COMMERCE,United States
+29,ShippedFast,United States
+30,Aserson,United States
+31,recommerce,United States
+32,TheNewMall,United States
+33,Just Love Fashion,United States
+34,Hour Loop,United States
+35,eSupplements,United States
+36,YH-Goods,United States
+37,6pm,United States
+38,Hippo Books,United States
+39,MetroDecor,United States
+40,uxcell,Hong Kong
+41,Kaspien,United States
+42,Wiki Deals,United States
+43,Tech Vendor,United States
+44,LiCB,China
+45,LY Berditchev Co.,United States
+46,Mr. Pen,United States
+47,Oliver's Pet Care,United States
+48,imagikids LLC,United States
+49,TCP Global Corp,United States
+50,megahitrecords,United States
+51,CPGIO,United States
+52,Swanson Health Products,United States
+53,Sports Research,United States
+54,BN-LINK,United States
+55,Royal Meds,United States
+56,Zulay Deals,United States
+57,Woot,United States
+58,Baleaf Sports,China
+59,Songmics Direct,United States
+60,OxKom,United States
+61,Dewenwils,China
+62,Monster Pets,United States
+63,JE Products US,United States
+64,UGREEN GROUP LIMITED,China
+65,EXPECT MORE,United States
+66,JS Digital,China
+67,VerSure,United States
+68,HLmedical,United States
+69,Libros Judios,United States
+70,Anthony's Goods,United States
+71,importcds,United States
+72,Vive Health Direct,United States
+73,Mr. Medical,United States
+74,Vont,United States
+75,Twinkle Star LLC,United States
+76,RAREWAVES-IMPORTS,United Kingdom
+77,Govee US,Hong Kong
+78,GreatStar Tools,United States
+79,BestChoiceproducts,United States
+80,Impresa Products,United States
+81,i-Deals Store,United States
+82,H.VERSAILTEX,China
+83,Thalestris Co.,United States
+84,Andromache,United States
+85,HiwareDirect,China
+86,Autobodynow,United States
+87,My RMS Store,United States
+88,NetRush,United States
+89,Real Essentials,United States
+90,BuyBoxer,United States
+91,My Great Goods,United States
+92,Filterbuy,United States
+93,YETI Authorized,United States
+94,Number 1 In Service,United States
+95,Jenson Books Inc,United States
+96,Vermont Christmas Co,United States
+97,AstroAI Corporation,United States
+98,ZQUARED,United States
+99,"Terrific Deal, Inc.",United States
+100,Healthy Pantry,United States

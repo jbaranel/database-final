@@ -1,20 +1,20 @@
-manufacturer_name
-Openlane
-Bose
-Beats
-Opentech
-Head and Shoulders
-Conair
-Revlon
-American Crew
-Mattel Games
-Sumace
-Hasbro
-Sony
-Conecom
-Marvel
-Nature Made
-Kleenex
-BlenderBottle
-Bounty
-Pure Protein
+id,manufacturer_name
+1,Openlane
+2,Bose
+3,Beats
+4,Opentech
+5,Head and Shoulders
+6,Conair
+7,Revlon
+8,American Crew
+9,Mattel Games
+10,Sumace
+11,Hasbro
+12,Sony
+13,Conecom
+14,Marvel
+15,Nature Made
+16,Kleenex
+17,BlenderBottle
+18,Bounty
+19,Pure Protein

@@ -1,4 +1,11 @@
--- The participation constraints on product and manufacturer cannot be captured in this implementation 
+drop table if exists Customers cascade;
+drop table if exists Manufacturers cascade;
+drop table if exists Sellers cascade;
+drop table if exists Warehouses cascade;
+drop table if exists Inventory_manage cascade;
+drop table if exists Product_produces_transaction cascade;
+drop table if exists Stock cascade;
+drop table if exists Stored_in cascade;
 
 create table Product_produces_transaction(
     serial_num char(32) primary key,
@@ -31,6 +38,7 @@ create table Warehouses(
 create table Sellers(
     sid integer primary key,
     name varchar(64),
+    country varchar(64);
 );
 
 create table Customers(
