@@ -22,7 +22,7 @@ create table Warehouses(
 create table Sellers(
     sid integer primary key,
     name varchar(64),
-    country varchar(64);
+    country varchar(64),
 );
 
 create table Customers(
@@ -49,28 +49,28 @@ create table Product_produces_transaction(
     foreign key (manufacturuer) references Manufacturers(mid),
     foreign key (cid) references Customers(cid),
     foreign key (sid) references Sellers(sid),
-    foreign key (timestamp) references Time(timestamp)
+    foreign key (timestamp) references Time(timestamp),
 );
 
 create table Inventory_manage( 
     iid integer primary key,
     manager integer not null,
     quantity integer,
-    foreign key (manager) references Sellers(sid)
+    foreign key (manager) references Sellers(sid),
 );
 
 create table Stock(
     serial_num char(32)
     iid integer,
-    primary key(serial_num, iid);
+    primary key(serial_num, iid),
     foreign key (serial_num) references Product,
-    foreign key (iid) references Inventory
+    foreign key (iid) references Inventory,
 );
 
 create table Stored_in(
-    serial_num integer
-    name varchar(64)
-    primary key(serial_num, name)
-    foreign key (serial_num) references Product
-    foreign key (name) references Warehouses
-)
+    serial_num integer,
+    name varchar(64),
+    primary key(serial_num, name),
+    foreign key (serial_num) references Product,
+    foreign key (name) references Warehouses,
+);
