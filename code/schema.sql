@@ -7,22 +7,6 @@ drop table if exists Product_produces_transaction cascade;
 drop table if exists Stock cascade;
 drop table if exists Stored_in cascade;
 
-create table Product_produces_transaction(
-    serial_num char(32) primary key,
-    cid integer not null,
-    sid integer not null,
-    timestamp timestamp not null,
-    price integer not null,
-    name varchar(128) not null,
-    category varchar (32),
-    manufacturuer integer not null,
-    description varchar(512),
-    foreign key (manufacturuer) references Manufacturers(mid),
-    foreign key (cid) references Customers(cid),
-    foreign key (sid) references Sellers(sid),
-    foreign key (timestamp) references Time(timestamp)
-);
-
 create table Manufacturers(
     mid integer primary key,
     name varchar (128) not null,
@@ -50,6 +34,22 @@ create table Customers(
 
 create table Time(
     time timestamp primary key,
+);
+
+create table Product_produces_transaction(
+    serial_num char(32) primary key,
+    cid integer not null,
+    sid integer not null,
+    timestamp timestamp not null,
+    price integer not null,
+    name varchar(128) not null,
+    category varchar (32),
+    manufacturuer integer not null,
+    description varchar(512),
+    foreign key (manufacturuer) references Manufacturers(mid),
+    foreign key (cid) references Customers(cid),
+    foreign key (sid) references Sellers(sid),
+    foreign key (timestamp) references Time(timestamp)
 );
 
 create table Inventory_manage( 
