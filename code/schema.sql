@@ -61,7 +61,7 @@ create table Inventory_manage(
 );
 
 create table Stock(
-    serial_num char(32)
+    serial_num char(32),
     iid integer,
     primary key(serial_num, iid),
     foreign key (serial_num) references Product_produces_transaction(serial_num),
