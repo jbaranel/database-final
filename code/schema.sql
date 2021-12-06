@@ -42,7 +42,7 @@ create table Product_produces_transaction(
     cid integer not null,
     sid integer not null,
     date_time timestamp not null,
-    price integer not null,
+    price decimal not null,
     name varchar(128) not null,
     category varchar (32),
     manufacturuer integer not null,
