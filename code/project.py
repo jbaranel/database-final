@@ -2,7 +2,7 @@ import pandas as pd
 import psycopg2
 import streamlit as st
 from configparser import ConfigParser
-
+from datetime import date, datetime
 def throw_err():    
     st.write("Sorry! Something went wrong with your query, please try again.")
 
@@ -48,41 +48,82 @@ def query_db(sql: str):
 #TODO need to make these dates dynamic from user input
 start_date, end_date = '2021-08-31', '2021-11-25'
 
-sql_customer_purchases = f"""
-    SELECT S.sid, S.name, SUM(P.price)
+start_date = st.date_input(
+     "Select a start date",
+     date.today())
+
+end_date = st.date_input(
+     "Select an end date",
+     date.today())
+if start_date > end_date:
+    st.write('Please select and end date after the start date')
+else:
+    st.write('Date range selected:', start_date, end_date)
+
+sql_sales_range = f"""
+    SELECT S.name as seller, SUM(P.price)
     FROM Product_produces_transaction P, Sellers S
     WHERE P.sid = S.sid
-    AND (P.date_time BETWEEN {start_date} AND {end_date})
+    AND (P.date_time BETWEEN '{start_date}' AND '{end_date}')
     GROUP BY S.sid
-    ORDER BY S.sid;
+    ORDER BY S.name;
     """
-    
+if start_date and end_date:
+    try:
+        total_sales = query_db(sql_sales_range)   
+        #TODO Need to fix bug here where sales are returned as int and not decimal    
+        st.table(total_sales)
+    except:
+        throw_err()
+
+
 "## Products Produced By Manufacturer"
 sql_products = """
-    SELECT M.name, P.name, COUNT(P.name)
+    SELECT M.name as manufacturer, P.name as product, COUNT(P.name)
     FROM Product_produces_transaction P, Manufacturers M
     WHERE P.manufacturuer = M.mid
     GROUP BY M.name, P.name
     ORDER BY P.name;"""
 try:
-    products = query_db(sql_products).tolist()
+    products = query_db(sql_products)
+    st.table(products)
 except:
     throw_err()
-if products:
-    try:
-        st.write(products)
-    except:
-        throw_err()
 
 "## Products Purchased By Customer"
 sql_customer_purchases = """
     SELECT C.cid, C.name, C.surname, P.name, P.price
     FROM Product_produces_transaction P, Customers C
     WHERE P.cid = C.cid
-    ORDER BY C.cid;
-    """
+    AND C.cid = 45
+    ORDER BY P.name;"""
+
+sql_customer_names = """
+    SELECT cid, name, surname 
+    FROM Customers
+    ORDER BY name, surname;"""
+try:
+    customer_names = query_db(sql_customer_names).values.tolist()
+    #TODO want to concat 2 columns for first and lastname
+    customer_name = st.selectbox("Choose a customer", customer_names)
+except:
+    throw_err()
+
+##if customer_name:
+  ##  sql_customer = f"SELECT * FROM customers WHERE name = '{customer_name}';"
+try:
+    customer_purchases = query_db(sql_customer_purchases)  
+    #TODO not sure why this isnt working    
+    st.table(customer_purchases)
+except:
+    throw_err()
+
+
+
+
+
 "## Products Sold By Seller"
-sql_customer_purchases = """
+sql_products_sold = """
     SELECT DISTINCT S.sid, S.name, P.name
     FROM Product_produces_transaction P, Sellers S
     WHERE P.sid = S.sid
@@ -90,22 +131,4 @@ sql_customer_purchases = """
     """
 
 "## Query customers"
-sql_customer_names = "SELECT name, surname FROM Customers;"
-try:
-    customer_names = query_db(sql_customer_names)["name"].tolist()
-    customer_name = st.selectbox("Choose a customer", customer_names)
-except:
-    throw_err()
 
-if customer_name:
-    sql_customer = f"SELECT * FROM customers WHERE name = '{customer_name}';"
-    try:
-        customer_info = query_db(sql_customer).loc[0]
-        c_address = (
-            customer_info["address"]
-        )
-        st.write(
-            f"{customer_name} lives at {c_address}."
-        )
-    except:
-        throw_err()
