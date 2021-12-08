@@ -45,9 +45,6 @@ def query_db(sql: str):
     return df
 
 "## Total Sales By Seller"
-#TODO need to make these dates dynamic from user input
-start_date, end_date = '2021-08-31', '2021-11-25'
-
 start_date = st.date_input(
      "Select a start date",
      date.today())
@@ -55,6 +52,7 @@ start_date = st.date_input(
 end_date = st.date_input(
      "Select an end date",
      date.today())
+
 if start_date > end_date:
     st.write('Please select and end date after the start date')
 else:
@@ -109,17 +107,12 @@ try:
 except:
     throw_err()
 
-##if customer_name:
-  ##  sql_customer = f"SELECT * FROM customers WHERE name = '{customer_name}';"
 try:
     customer_purchases = query_db(sql_customer_purchases)  
-    #TODO not sure why this isnt working    
+    #TODO Need to fix bug, not sure why this isnt working    
     st.table(customer_purchases)
 except:
     throw_err()
-
-
-
 
 
 "## Products Sold By Seller"
@@ -129,6 +122,4 @@ sql_products_sold = """
     WHERE P.sid = S.sid
     ORDER BY S.sid, P.name;
     """
-
-"## Query customers"
 
