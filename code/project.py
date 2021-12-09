@@ -68,9 +68,19 @@ sql_sales_range = f"""
     """
 if start_date and end_date:
     try:
-        total_sales = query_db(sql_sales_range)
+        total_sales = query_db(sql_sales_range)        
         #TODO Need to fix bug here where sales are returned as int and not decimal    
         st.table(total_sales)
+        sales = query_db(f"""
+            SELECT SUM(P.price) as sum, DATE(P.date_time)
+            FROM Product_produces_transaction P, Sellers S
+            WHERE P.sid = S.sid
+            AND (P.date_time BETWEEN '{start_date}' AND '{end_date}')
+            GROUP BY P.date_time
+            ORDER BY P.date_time;
+            """)
+
+        st.table(sales)
     except Exception as e:
         throw_err()
         print(e)
@@ -82,7 +92,7 @@ sql_products = """
     FROM Product_produces_transaction P, Manufacturers M
     WHERE P.manufacturuer = M.mid
     GROUP BY M.name, P.name
-    ORDER BY P.name;"""
+    ORDER BY M.name, P.name;"""
 try:
     products = query_db(sql_products)    
     st.table(products)
