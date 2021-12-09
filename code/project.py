@@ -71,8 +71,9 @@ if start_date and end_date:
         total_sales = query_db(sql_sales_range)   
         #TODO Need to fix bug here where sales are returned as int and not decimal    
         st.table(total_sales)
-    except:
+    except Exception as e:
         throw_err()
+        print(e)
 
 
 "## Products Produced By Manufacturer"
@@ -83,36 +84,43 @@ sql_products = """
     GROUP BY M.name, P.name
     ORDER BY P.name;"""
 try:
-    products = query_db(sql_products)
+    products = query_db(sql_products)    
     st.table(products)
-except:
-    throw_err()
+except Exception as e:
+        throw_err()
+        print(e)
 
 "## Products Purchased By Customer"
-sql_customer_purchases = """
-    SELECT C.cid, C.name, C.surname, P.name, P.price
-    FROM Product_produces_transaction P, Customers C
-    WHERE P.cid = C.cid
-    AND C.cid = 45
-    ORDER BY P.name;"""
-
 sql_customer_names = """
     SELECT cid, name, surname 
     FROM Customers
     ORDER BY name, surname;"""
 try:
-    customer_names = query_db(sql_customer_names).values.tolist()
-    #TODO want to concat 2 columns for first and lastname
-    customer_name = st.selectbox("Choose a customer", customer_names)
-except:
-    throw_err()
+    customers = query_db(sql_customer_names)
+    first_name = customers['name']
+    surname = customers['surname']
+    customer_names = first_name + " " + surname
 
-try:
-    customer_purchases = query_db(sql_customer_purchases)  
-    #TODO Need to fix bug, not sure why this isnt working    
-    st.table(customer_purchases)
-except:
-    throw_err()
+    customer_name = st.selectbox("Choose a customer", customer_names)
+    #TODO hard coded for now
+    #cid = customers[customers['name'] = first_name]
+    try:
+        customer_purchases = query_db(f"""            
+        SELECT C.cid, C.name, C.surname, P.name, P.price
+        FROM Product_produces_transaction P, Customers C
+        WHERE P.cid = C.cid
+        AND C.cid = {cid}
+        ORDER BY P.name;"""
+        ).values.tolist()
+        #TODO Need to fix bug, not sure why this isnt working    
+        st.write(customer_purchases)
+    except Exception as e:
+        throw_err()
+        print(e)
+except Exception as e:
+        throw_err()
+        print(e)
+
 
 
 "## Products Sold By Seller"
