@@ -3,6 +3,11 @@ import psycopg2
 import streamlit as st
 from configparser import ConfigParser
 from datetime import date, datetime
+from collections import deque
+
+"# Ecommerce manager platform"
+
+
 def throw_err():    
     st.write("Sorry! Something went wrong with your query, please try again.")
 
@@ -43,8 +48,8 @@ def query_db(sql: str):
     df = pd.DataFrame(data=data, columns=column_names)
 
     return df
-"## Read tables"
 
+"## Read tables"
 sql_all_table_names = "SELECT relname FROM pg_class WHERE relkind='r' AND relname !~ '^(pg_|sql_)';"
 try:
     all_table_names = query_db(sql_all_table_names)["relname"].tolist()
@@ -64,116 +69,160 @@ if table_name:
             "Sorry! Something went wrong with your query, please try again."
         )
 
-
-"## Total Sales By Seller"
+"## Total Sales By Date & Seller"
 start_date = st.date_input(
      "Select a start date",
-     date.date(2020,1,1))
+     date(2020,1,1)) # TODO wanna change this to a preselected date: tried with date(y,m,d) but gives error
 
 end_date = st.date_input(
      "Select an end date",
      date.today())
 
+#getting user input for seller
+sql_seller_names = "SELECT name FROM Sellers;"
+try:
+    #add the option to see all seller
+    seller_names1 = deque(query_db(sql_seller_names)["name"]) 
+    seller_names1.appendleft('See all sellers')
+    seller_name1 = st.selectbox("Choose a seller", seller_names1)
+except:
+    st.write("fuck")
+    #st.write("Sorry! Something went wrong with your query, please try again.")
+
 if start_date > end_date:
     st.write('Please select and end date after the start date')
+elif start_date > date.today():
+    st.write('You cannot select a date from the future')
 else:
     st.write('Date range selected:', start_date, end_date)
 
-sql_sales_range = f"""
-    SELECT S.name as Seller_Name, SUM(P.price) as Total_sales($)
+#check if user selected to see all sellers or not
+#retrieve user selection
+if start_date and end_date and seller_name1:
+    if seller_name1 != 'See all sellers': 
+        sql_sales_range = f"""
+    SELECT S.name as seller, SUM(P.price) as sum
     FROM Product_produces_transaction P, Sellers S
-    WHERE P.sid = S.sid
+    WHERE S.name = '{seller_name1}' AND P.sid = S.sid
     AND (P.date_time BETWEEN '{start_date}' AND '{end_date}')
     GROUP BY S.sid
-    ORDER BY Total_sales($);
+    ORDER BY sum DESC;
     """
-if start_date and end_date:
+    else:
+        sql_sales_range = f"""
+    SELECT S.name as seller, SUM(P.price) as sum
+    FROM Product_produces_transaction P, Sellers S
+    WHERE S.name = S.name AND P.sid = S.sid
+    AND (P.date_time BETWEEN '{start_date}' AND '{end_date}')
+    GROUP BY S.sid
+    ORDER BY sum DESC;
+    """
+
     try:
-        total_sales = query_db(sql_sales_range)        
+        total_sales = query_db(sql_sales_range)
         #TODO Need to fix bug here where sales are returned as int and not decimal    
         st.table(total_sales)
-        sales = query_db(f"""
-            SELECT SUM(P.price) as sum, DATE(P.date_time)
-            FROM Product_produces_transaction P, Sellers S
-            WHERE P.sid = S.sid
-            AND (P.date_time BETWEEN '{start_date}' AND '{end_date}')
-            GROUP BY P.date_time
-            ORDER BY P.date_time;
-            """)
-
-        st.table(sales)
     except Exception as e:
         throw_err()
         print(e)
+
+
+'## Number of stock of product by sellers'
+sql_product_names = "SELECT name FROM Product_produces_transaction;"
+try:
+    product_names = set(query_db(sql_product_names)["name"])
+    product_name = st.selectbox("Choose a product", product_names)
+except:
+    st.write("Sorry! Something went wrong with your query, please try again.")
+
+if product_name:
+    sql_product = f"""
+    SELECT P.name as Product_name, I.quantity, SE.name as Seller_name
+    FROM product_produces_transaction P, stock S, inventory_manage I, sellers SE
+    WHERE P.name = '{product_name}' and P.serial_num = S.serial_num and S.iid = I.iid and SE.sid = I.manager
+    Order by p.name; 
+    """
+    try:
+        product_info = query_db(sql_product)
+        st.table(product_info)
+    except:
+        st.write(
+            "Sorry! Something went wrong with your query, please try again."
+        )
 
 
 "## Products Produced By Manufacturer"
-sql_products = """
-    SELECT M.name as manufacturer, P.name as product, COUNT(P.name)
-    FROM Product_produces_transaction P, Manufacturers M
-    WHERE P.manufacturuer = M.mid
-    GROUP BY M.name, P.name
-    ORDER BY M.name, P.name;"""
+sql_manu_names = "SELECT name FROM Manufacturers;"
 try:
-    products = query_db(sql_products)    
-    st.table(products)
-except Exception as e:
-        throw_err()
-        print(e)
+    manu_names = set(query_db(sql_manu_names)["name"])
+    manu_name = st.selectbox("Choose a manufacturer", manu_names)
+except:
+    st.write("Sorry! Something went wrong with your query, please try again.")
 
-"## Products Purchased By Customer"
-sql_customer_names = """
-    SELECT cid, name, surname 
-    FROM Customers
-    ORDER BY name, surname;"""
-try:
-    customers = query_db(sql_customer_names)
-    first_name = customers['name']
-    surname = customers['surname']
-    customer_names = first_name + " " + surname
-
-    customer_name = st.selectbox("Choose a customer", customer_names)
-    #TODO hard coded for now
-    #cid = customers[customers['name'] = first_name]
-    try:
-        customer_purchases = query_db(f"""            
-        SELECT C.cid, C.name, C.surname, P.name, P.price
-        FROM Product_produces_transaction P, Customers C
-        WHERE P.cid = C.cid
-        AND C.cid = {cid}
-        ORDER BY P.name;"""
-        ).values.tolist()
-        #TODO Need to fix bug, not sure why this isnt working    
-        st.write(customer_purchases)
-    except Exception as e:
-        throw_err()
-        print(e)
-except Exception as e:
-        throw_err()
-        print(e)
-
-
-
-"## Products Sold By Seller"
-sql_products_sold = """
-    SELECT DISTINCT S.sid, S.name, P.name
-    FROM Product_produces_transaction P, Sellers S
-    WHERE P.sid = S.sid
-    ORDER BY S.sid, P.name;
+if manu_name:
+    sql_product = f"""
+    SELECT DISTINCT P.name as name
+    FROM product_produces_transaction P, Manufacturers M
+    WHERE P.manufacturuer = M.mid AND M.name = '{manu_name}'; 
     """
+    try:
+        products_list = query_db(sql_product)['name'].tolist()
+        
+        if products_list == []:
+            st.write(f"{manu_name} is not producing any product at the moment")
+        else:
+            #choose output depending on number of products produces
+            s = 's' if len(products_list) >1 else ''
+            st.write(f"{manu_name} is producing the following product{s}: {' and '.join(products_list)}.")
+    except:
+        st.write(
+            "Sorry! Something went wrong with your query, please try again."
+        )
 
-sql_seller_names = """
-    SELECT sid, name
-    FROM Sellers
-    ORDER BY name;"""
+"## Transactions By Customer"
+sql_custo_names = "SELECT cid FROM Customers;"
 try:
-    sellers = query_db(sql_seller_names)  
-    seller_names = sellers['name']
+    custo_names = set(query_db(sql_custo_names)["cid"])
+    custo_name = st.selectbox("Choose a customer ID", custo_names)
+except:
+    st.write("Sorry! Something went wrong with your query, please try again.")
 
-    seller_name = st.selectbox("Choose a customer", seller_names)
+if custo_name:
+    sql_custo_prod = f"""
+    SELECT C.name customer, C.surname, S.name seller, T.date_time date_time, p.price
+    FROM product_produces_transaction P, Customers C, Sellers S, time T
+    WHERE P.cid = C.cid AND P.sid = S.sid AND t.date_time = P.date_time AND C.cid = {custo_name}; 
+    """
+    try:
+        custo_list = query_db(sql_custo_prod)
+        
+        st.table(custo_list)
+    except:
+        st.write(
+            "Sorry! Something went wrong with your query, please try again."
+        )
+
+"## Best Selling Products"
+try:
+    order = st.selectbox("Order", ['DESC','ASC'])
 except Exception as e:
-        throw_err()
-        print(e)
+    st.write("Sorry! Something went wrong with your query, please try again.")
+if order:
+    sql_best_selling = f"""
+    SELECT P.name, COUNT(T.date_time) sold
+    FROM product_produces_transaction P, Customers C, Sellers S, time T
+    WHERE P.cid = C.cid AND P.sid = S.sid AND t.date_time = P.date_time
+    GROUP BY P.name
+    ORDER BY sold {order};
+    """
+    try:
+        best_list = query_db(sql_best_selling)
+        st.table(best_list)
+    except:
+        st.write(
+            "Sorry! Something went wrong with your query, please try again."
+        )
+
 
 "## Total Sales By Country"
 sql_country_sales = """
