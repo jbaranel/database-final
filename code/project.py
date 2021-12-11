@@ -5,7 +5,7 @@ from configparser import ConfigParser
 from datetime import date, datetime
 from collections import deque
 
-"# Ecommerce manager platform"
+"# Ecommerce Management Platform"
 
 
 def throw_err():    
@@ -100,7 +100,10 @@ else:
 
         try:
             total_sales = query_db(sql_sales_range)
-            st.table(total_sales.style.format({'sum': '${:.2f}'}))
+            if not total_sales.empty:
+                st.table(total_sales.style.format({'sum': '${:.2f}'}))
+            else:
+                st.write("No results for your query")
         except Exception as e:
             throw_err()
             print(e)
@@ -142,7 +145,7 @@ if manu_name:
         SELECT DISTINCT P.name as name
         FROM product_produces_transaction P, Manufacturers M
         WHERE P.manufacturuer = M.mid AND M.name = '{manu_name}'; 
-    """
+        """
     try:
         products_list = query_db(sql_product)['name'].tolist()
         
@@ -165,14 +168,18 @@ except:
 
 if custo_name:
     sql_custo_prod = f"""
-        SELECT C.name customer, C.surname, S.name seller, P.name as product, T.date_time date_time, p.price
-        FROM product_produces_transaction P, Customers C, Sellers S, time T
-        WHERE P.cid = C.cid AND P.sid = S.sid AND t.date_time = P.date_time AND C.cid = {custo_name}; 
+            SELECT C.name customer, C.surname, S.name seller, P.name as product, T.date_time date_time, p.price
+            FROM product_produces_transaction P, Customers C, Sellers S, time T
+            WHERE P.cid = C.cid AND P.sid = S.sid AND t.date_time = P.date_time AND C.cid = {custo_name}
+            ORDER BY T.date_time; 
         """
     try:               
         custo_list = query_db(sql_custo_prod)
-        #custo_list['price'] = custo_list['price'].apply(lambda x: "${:.2f}".format((float(x))))  
-        st.table(custo_list.style.format({'price': '${:.2f}'}))
+        if not custo_list.empty:
+            st.table(custo_list.style.format({'price': '${:.2f}'}))
+        else:
+            st.write("No results for your query")
+        
     except Exception as e:
         throw_err()
 
