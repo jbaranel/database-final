@@ -18,7 +18,7 @@ def get_config(filename="database.ini", section="postgresql"):
     return {k: v for k, v in parser.items(section)}
 
 
-@st.cache
+@st.cache(allow_output_mutation=True)
 def query_db(sql: str):
     # print(f"Running query_db(): {sql}")
 
@@ -55,7 +55,7 @@ try:
     all_table_names = query_db(sql_all_table_names)["relname"].tolist()
     table_name = st.selectbox("Choose a table", all_table_names)
 except:
-    st.write("Sorry! Something went wrong with your query, please try again.")
+    throw_err()
 
 if table_name:
     f"Display the table"
@@ -65,14 +65,12 @@ if table_name:
         df = query_db(sql_table)
         st.dataframe(df)
     except:
-        st.write(
-            "Sorry! Something went wrong with your query, please try again."
-        )
+        throw_err()
 
 "## Total Sales By Date & Seller"
 start_date = st.date_input(
      "Select a start date",
-     date(2020,1,1)) # TODO wanna change this to a preselected date: tried with date(y,m,d) but gives error
+     date(2020,1,1))
 
 end_date = st.date_input(
      "Select an end date",
@@ -85,46 +83,45 @@ try:
     seller_names1 = deque(query_db(sql_seller_names)["name"]) 
     seller_names1.appendleft('See all sellers')
     seller_name1 = st.selectbox("Choose a seller", seller_names1)
-except:
-    st.write("fuck")
-    #st.write("Sorry! Something went wrong with your query, please try again.")
+except:    
+    throw_err()
 
 if start_date > end_date:
     st.write('Please select and end date after the start date')
 elif start_date > date.today():
-    st.write('You cannot select a date from the future')
+    st.write('You cannot select a date in the future')
+elif end_date > date.today():
+    st.write('You cannot select a date in the future')
 else:
     st.write('Date range selected:', start_date, end_date)
+    #check if user selected to see all sellers or not
+    #retrieve user selection
+    if start_date and end_date and seller_name1:
+        if seller_name1 != 'See all sellers': 
+            sql_sales_range = f"""
+                SELECT S.name as seller, SUM(P.price) as sum
+                FROM Product_produces_transaction P, Sellers S
+                WHERE S.name = '{seller_name1}' AND P.sid = S.sid
+                AND (P.date_time BETWEEN '{start_date}' AND '{end_date}')
+                GROUP BY S.sid
+                ORDER BY sum DESC;
+                """
+        else:
+            sql_sales_range = f"""
+                SELECT S.name as seller, SUM(P.price) as sum
+                FROM Product_produces_transaction P, Sellers S
+                WHERE S.name = S.name AND P.sid = S.sid
+                AND (P.date_time BETWEEN '{start_date}' AND '{end_date}')
+                GROUP BY S.sid
+                ORDER BY sum DESC;
+                """
 
-#check if user selected to see all sellers or not
-#retrieve user selection
-if start_date and end_date and seller_name1:
-    if seller_name1 != 'See all sellers': 
-        sql_sales_range = f"""
-    SELECT S.name as seller, SUM(P.price) as sum
-    FROM Product_produces_transaction P, Sellers S
-    WHERE S.name = '{seller_name1}' AND P.sid = S.sid
-    AND (P.date_time BETWEEN '{start_date}' AND '{end_date}')
-    GROUP BY S.sid
-    ORDER BY sum DESC;
-    """
-    else:
-        sql_sales_range = f"""
-    SELECT S.name as seller, SUM(P.price) as sum
-    FROM Product_produces_transaction P, Sellers S
-    WHERE S.name = S.name AND P.sid = S.sid
-    AND (P.date_time BETWEEN '{start_date}' AND '{end_date}')
-    GROUP BY S.sid
-    ORDER BY sum DESC;
-    """
-
-    try:
-        total_sales = query_db(sql_sales_range)
-        #TODO Need to fix bug here where sales are returned as int and not decimal    
-        st.table(total_sales)
-    except Exception as e:
-        throw_err()
-        print(e)
+        try:
+            total_sales = query_db(sql_sales_range)
+            st.table(total_sales.style.format({'sum': '${:.2f}'}))
+        except Exception as e:
+            throw_err()
+            print(e)
 
 
 '## Number of stock of product by sellers'
@@ -133,22 +130,21 @@ try:
     product_names = set(query_db(sql_product_names)["name"])
     product_name = st.selectbox("Choose a product", product_names)
 except:
-    st.write("Sorry! Something went wrong with your query, please try again.")
+    throw_err()
 
+#TODO need to check this query
 if product_name:
     sql_product = f"""
-    SELECT P.name as Product_name, I.quantity, SE.name as Seller_name
-    FROM product_produces_transaction P, stock S, inventory_manage I, sellers SE
-    WHERE P.name = '{product_name}' and P.serial_num = S.serial_num and S.iid = I.iid and SE.sid = I.manager
-    Order by p.name; 
-    """
+        SELECT P.name as Product_name, I.quantity, SE.name as Seller_name
+        FROM product_produces_transaction P, stock S, inventory_manage I, sellers SE
+        WHERE P.name = '{product_name}' and P.serial_num = S.serial_num and S.iid = I.iid and SE.sid = I.manager
+        Order by p.name; 
+        """
     try:
         product_info = query_db(sql_product)
         st.table(product_info)
     except:
-        st.write(
-            "Sorry! Something went wrong with your query, please try again."
-        )
+        throw_err()
 
 
 "## Products Produced By Manufacturer"
@@ -157,13 +153,13 @@ try:
     manu_names = set(query_db(sql_manu_names)["name"])
     manu_name = st.selectbox("Choose a manufacturer", manu_names)
 except:
-    st.write("Sorry! Something went wrong with your query, please try again.")
+    throw_err()
 
 if manu_name:
     sql_product = f"""
-    SELECT DISTINCT P.name as name
-    FROM product_produces_transaction P, Manufacturers M
-    WHERE P.manufacturuer = M.mid AND M.name = '{manu_name}'; 
+        SELECT DISTINCT P.name as name
+        FROM product_produces_transaction P, Manufacturers M
+        WHERE P.manufacturuer = M.mid AND M.name = '{manu_name}'; 
     """
     try:
         products_list = query_db(sql_product)['name'].tolist()
@@ -175,9 +171,7 @@ if manu_name:
             s = 's' if len(products_list) >1 else ''
             st.write(f"{manu_name} is producing the following product{s}: {' and '.join(products_list)}.")
     except:
-        st.write(
-            "Sorry! Something went wrong with your query, please try again."
-        )
+        throw_err()
 
 "## Transactions By Customer"
 sql_custo_names = "SELECT cid FROM Customers;"
@@ -185,28 +179,26 @@ try:
     custo_names = set(query_db(sql_custo_names)["cid"])
     custo_name = st.selectbox("Choose a customer ID", custo_names)
 except:
-    st.write("Sorry! Something went wrong with your query, please try again.")
+    throw_err()
 
 if custo_name:
     sql_custo_prod = f"""
-    SELECT C.name customer, C.surname, S.name seller, T.date_time date_time, p.price
-    FROM product_produces_transaction P, Customers C, Sellers S, time T
-    WHERE P.cid = C.cid AND P.sid = S.sid AND t.date_time = P.date_time AND C.cid = {custo_name}; 
-    """
-    try:
+        SELECT C.name customer, C.surname, S.name seller, P.name as product, T.date_time date_time, p.price
+        FROM product_produces_transaction P, Customers C, Sellers S, time T
+        WHERE P.cid = C.cid AND P.sid = S.sid AND t.date_time = P.date_time AND C.cid = {custo_name}; 
+        """
+    try:               
         custo_list = query_db(sql_custo_prod)
-        
-        st.table(custo_list)
-    except:
-        st.write(
-            "Sorry! Something went wrong with your query, please try again."
-        )
+        #custo_list['price'] = custo_list['price'].apply(lambda x: "${:.2f}".format((float(x))))  
+        st.table(custo_list.style.format({'price': '${:.2f}'}))
+    except Exception as e:
+        throw_err()
 
 "## Best Selling Products"
 try:
     order = st.selectbox("Order", ['DESC','ASC'])
 except Exception as e:
-    st.write("Sorry! Something went wrong with your query, please try again.")
+    throw_err()
 if order:
     sql_best_selling = f"""
     SELECT P.name, COUNT(T.date_time) sold
@@ -218,10 +210,9 @@ if order:
     try:
         best_list = query_db(sql_best_selling)
         st.table(best_list)
-    except:
-        st.write(
-            "Sorry! Something went wrong with your query, please try again."
-        )
+    except Exception as e:
+        throw_err()
+        print(e)
 
 
 "## Total Sales By Country"
@@ -233,8 +224,9 @@ sql_country_sales = """
     ORDER BY Sales desc;
     """
 try:
-    country_sales = query_db(sql_country_sales)  
-    st.table(country_sales)
+    country_sales = query_db(sql_country_sales) 
+     
+    st.table(country_sales.style.format({'sales': '${:.2f}'}))
 except Exception as e:
         throw_err()
         print(e)
