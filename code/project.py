@@ -49,24 +49,6 @@ def query_db(sql: str):
 
     return df
 
-"## Read tables"
-sql_all_table_names = "SELECT relname FROM pg_class WHERE relkind='r' AND relname !~ '^(pg_|sql_)';"
-try:
-    all_table_names = query_db(sql_all_table_names)["relname"].tolist()
-    table_name = st.selectbox("Choose a table", all_table_names)
-except:
-    throw_err()
-
-if table_name:
-    f"Display the table"
-
-    sql_table = f"SELECT * FROM {table_name};"
-    try:
-        df = query_db(sql_table)
-        st.dataframe(df)
-    except:
-        throw_err()
-
 "## Total Sales By Date & Seller"
 start_date = st.date_input(
      "Select a start date",
