@@ -45,9 +45,9 @@ create table Product_produces_transaction(
     price decimal not null,
     name varchar(128) not null,
     category varchar (32),
-    manufacturuer integer not null,
+    manufacturer integer not null,
     description varchar(512),
-    foreign key (manufacturuer) references Manufacturers(mid),
+    foreign key (manufacturer) references Manufacturers(mid),
     foreign key (cid) references Customers(cid),
     foreign key (sid) references Sellers(sid),
     foreign key (date_time) references Time(date_time)
