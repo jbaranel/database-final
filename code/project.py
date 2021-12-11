@@ -214,6 +214,24 @@ if order:
         throw_err()
         print(e)
 
+"## Seller Warehouse Storage"
+sql_seller_warehouse = """
+    SELECT S.name as seller, COUNT(P.name) as products_stored, W.name as warehouse, W.address
+    FROM product_produces_transaction P, Sellers S, Stored_in SI, Warehouses W
+    WHERE P.serial_num = SI.serial_num
+    AND P.sid = S.Sid
+    AND W.name = SI.name
+    GROUP BY S.name, W.name
+    ORDER BY S.name, warehouse;
+    """
+try:
+    seller_warehouse = query_db(sql_seller_warehouse) 
+     
+    st.table(seller_warehouse)
+except Exception as e:
+        throw_err()
+        print(e)
+
 
 "## Total Sales By Country"
 sql_country_sales = """
