@@ -43,11 +43,32 @@ def query_db(sql: str):
     df = pd.DataFrame(data=data, columns=column_names)
 
     return df
+"## Read tables"
+
+sql_all_table_names = "SELECT relname FROM pg_class WHERE relkind='r' AND relname !~ '^(pg_|sql_)';"
+try:
+    all_table_names = query_db(sql_all_table_names)["relname"].tolist()
+    table_name = st.selectbox("Choose a table", all_table_names)
+except:
+    st.write("Sorry! Something went wrong with your query, please try again.")
+
+if table_name:
+    f"Display the table"
+
+    sql_table = f"SELECT * FROM {table_name};"
+    try:
+        df = query_db(sql_table)
+        st.dataframe(df)
+    except:
+        st.write(
+            "Sorry! Something went wrong with your query, please try again."
+        )
+
 
 "## Total Sales By Seller"
 start_date = st.date_input(
      "Select a start date",
-     date.today())
+     date.date(2020,1,1))
 
 end_date = st.date_input(
      "Select an end date",
@@ -59,12 +80,12 @@ else:
     st.write('Date range selected:', start_date, end_date)
 
 sql_sales_range = f"""
-    SELECT S.name as seller, SUM(P.price) as sum
+    SELECT S.name as Seller_Name, SUM(P.price) as Total_sales($)
     FROM Product_produces_transaction P, Sellers S
     WHERE P.sid = S.sid
     AND (P.date_time BETWEEN '{start_date}' AND '{end_date}')
     GROUP BY S.sid
-    ORDER BY S.name;
+    ORDER BY Total_sales($);
     """
 if start_date and end_date:
     try:
