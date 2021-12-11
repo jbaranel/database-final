@@ -6,5 +6,5 @@
  cat ./csv_files/transaction_times.csv | psql -U jb7607 -d jb7607_db -c "COPY Time FROM STDIN CSV HEADER"
  cat ./csv_files/products.csv | psql -U jb7607 -d jb7607_db -c "COPY Product_produces_transaction FROM STDIN CSV HEADER"
  cat ./csv_files/stored_in.csv | psql -U jb7607 -d jb7607_db -c "COPY Stored_in FROM STDIN CSV HEADER"
- cat ./csv_files/stock.csv | psql -U jb7607 -d jb7607_db -c "COPY Stock FROM STDIN CSV HEADER"
  cat ./csv_files/inventory.csv | psql -U jb7607 -d jb7607_db -c "COPY Inventory_manage FROM STDIN CSV HEADER"
+ cat ./csv_files/stock.csv | psql -U jb7607 -d jb7607_db -c "COPY Stock FROM STDIN CSV HEADER"
