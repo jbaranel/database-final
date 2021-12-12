@@ -5,7 +5,7 @@ from configparser import ConfigParser
 from datetime import date, datetime
 from collections import deque
 
-"# Ecommerce Management Platform"
+"# Ecommerce Data Dashboard"
 
 
 def throw_err():    
